@@ -1,0 +1,55 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+{% block body %}
+<div class=" ">
+    <div class='container'>
+        <div class='d-flex flex-column justify-content-center align-items-center' style='margin-top:200px'>
+            <h1>Verify your Account:</h1>
+            <button onclick='verify()' style='margin-top:50px' id="btn1" type='button' class='btn btn-primary'>
+                Verify
+            </button>
+            <div class="success mt-4">
+                <p>Your account has been verified. Close this browser and login.</p>
+            </div>
+            <div class="failed mt-4" >
+                <p>An error occured please contact Admin.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .success, .failed {
+        display: none;
+    }
+</style>
+<script>
+    let uid = "{{uid}}"
+    let token = "{{token}}"
+    const verify = async () => {
+        const body = JSON.stringify({ uid, token });
+
+        try {
+            let url = `{{ activation_url }}/api/v1/users/activation/`
+            const response = await fetch(url, {
+                method: "post",
+                body: body,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            document.querySelector("#btn1").setAttribute('disabled', '')
+
+            if (!response.ok) {
+                return document.querySelector(".failed").style.display = "block"
+            }
+
+            return document.querySelector(".success").style.display = "block"
+
+        } catch (err) {
+            console.log(err)
+        }
+
+    };
+</script>
+{% endblock %}
